@@ -51,6 +51,7 @@ public class CommerceNew {
 
     // 打印商品结果列表
     public static void printGoodsList(List<Goods> goodsList) {
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
         // 打印表头
         System.out.printf("%-5s %-20s %-10s %-15s %-10s %-20s %-10s %-10s%n",
                 "ID", "商品名称", "单价", "库存", "单位", "上架时间", "状态", "分类ID");
@@ -68,10 +69,13 @@ public class CommerceNew {
                     goods.getSalesStatus(),
                     goods.getCategoryId());
         }
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
+
     }
 
     // 打印分类结果列表
     public static void printCategoryList(List<Category> categoryList) {
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
         // 打印表头
         System.out.printf("%-5s %-20s %-10s %-50s%n",
                 "ID", "分类名称", "排序", "分类介绍");
@@ -85,6 +89,8 @@ public class CommerceNew {
                     category.getSortOrder(),
                     category.getCategoryIntroduction());
         }
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
+
     }
 
     // T1 向商品表（goods）中插入一条新的商品记录
@@ -110,7 +116,7 @@ public class CommerceNew {
 
         // 执行更新操作
         int affectedRows = preparedStatement.executeUpdate();
-        System.out.println("插入成功，受影响的行数: " + affectedRows);
+        System.out.println("T1.1 插入成功，受影响的行数: " + affectedRows);
 
         //释放资源
         DBUtils.close(conn, preparedStatement);
@@ -119,6 +125,8 @@ public class CommerceNew {
 
     // T2 根据分类 id 查询商品信息
     public static List<Goods> getGoodsByCategoryId(int categoryId) throws SQLException {
+        System.out.println("查询分类id为 " + categoryId + " 的商品信息：");
+
         // 获取数据库连接
         Connection conn = DBUtils.getConnection();
 
@@ -144,6 +152,8 @@ public class CommerceNew {
 
     // T3 查询库存量低于 5 的商品信息
     public static List<Goods> getLowStockGoods() throws SQLException {
+        System.out.println("T1.3 查询库存量低于5的商品信息：");
+
         // 获取数据库连接
         Connection conn = DBUtils.getConnection();
 
@@ -166,6 +176,8 @@ public class CommerceNew {
 
     // T4 查询所有商品按照销量从高到低排序
     public static List<Goods> getGoodsBySalesVolumeDesc() throws SQLException {
+        System.out.println("T1.4 查询所有商品按照销量从高到低排序：");
+
         // 获取数据库连接
         Connection conn = DBUtils.getConnection();
         // 创建 preparedStatement 对象
@@ -182,6 +194,8 @@ public class CommerceNew {
 
     // T5 查询所有商品按照单价从高到低排序
     public static List<Goods> getGoodsByUnitPriceDesc() throws SQLException {
+        System.out.println("T1.5 查询所有商品按照单价从高到低排序：");
+
         // 获取数据库连接
         Connection conn = DBUtils.getConnection();
         // 创建 preparedStatement 对象
@@ -283,7 +297,7 @@ public class CommerceNew {
 
         // 执行更新操作
         int affectedRows = preparedStatement.executeUpdate();
-        System.out.println(affectedRows == 1 ? "修改成功" : "修改失败");
+        System.out.println("修改分类排序：" + (affectedRows == 1 ? "修改成功" : "修改失败"));
 
         // 释放资源
         DBUtils.close(conn, preparedStatement);
@@ -315,45 +329,47 @@ public class CommerceNew {
         preparedStatement = conn.prepareStatement(deleteSql);
         preparedStatement.setInt(1, categoryId);
         int affectedRows = preparedStatement.executeUpdate();
-        System.out.println(affectedRows == 1 ? "删除成功" : "删除失败");
+
+        System.out.println("删除id为 " + categoryId + " 的分类：" + (affectedRows == 1 ? "删除成功" : "删除失败"));
         // 释放资源
         DBUtils.close(conn, preparedStatement, resultSet);
     }
 
 
-    public static void main(String[] args) throws Exception {
-        // T1 向商品表（goods）中插入一条新的商品记录
-        LocalDateTime onShelfTime = LocalDateTime.now();
-        addGoods("商品名称", 19.99, 1, "件", 0, onShelfTime, "在售", 1);
-        System.out.println("插入成功");
+    public static void main(String[] args) {
+        try {
+            // T1.1 向商品表（goods）中插入一条新的商品记录
+            LocalDateTime onShelfTime = LocalDateTime.now();
+            addGoods("商品名称", 19.99, 1, "件", 0, onShelfTime, "在售", 1);
 
-        // T2 查询指定分类的商品信息
-        System.out.println("查询id：" + 1 + "的分类商品信息：");
-        List<Goods> goodsList = getGoodsByCategoryId(1);
-        printGoodsList(goodsList); // 打印结果信息
+            // T1.2 查询指定分类的商品信息
+            List<Goods> goodsList = getGoodsByCategoryId(1);
+            printGoodsList(goodsList); // 打印结果信息
 
-        // T3 查询库存量低于 5 的商品信息
-        System.out.println("查询库存量低于5的商品信息：");
-        List<Goods> lowStockGoodsList = getLowStockGoods();
-        printGoodsList(lowStockGoodsList); // 打印结果信息
+            // T1.3 查询库存量低于 5 的商品信息
+            List<Goods> lowStockGoodsList = getLowStockGoods();
+            printGoodsList(lowStockGoodsList); // 打印结果信息
 
-        // T4 查询所有商品按照销量从高到低排序
-        System.out.println("查询所有商品按照销量从高到低排序：");
-        List<Goods> goodsListDesc = getGoodsBySalesVolumeDesc();
-        printGoodsList(goodsListDesc);
+            // T1.4 查询所有商品按照销量从高到低排序
+            List<Goods> goodsListDesc = getGoodsBySalesVolumeDesc();
+            printGoodsList(goodsListDesc);
 
-        // T5 查询所有商品按照单价从高到低排序
-        System.out.println("查询所有商品按照单价从高到低排序：");
-        List<Goods> goodsListByUnitPrice = getGoodsByUnitPriceDesc();
-        printGoodsList(goodsListByUnitPrice);
+            // T1.5 查询所有商品按照单价从高到低排序
+            List<Goods> goodsListByUnitPrice = getGoodsByUnitPriceDesc();
+            printGoodsList(goodsListByUnitPrice);
 
-        // T8 修改分类排序
-        System.out.println("修改分类排序：");
-        modifyCategorySortOrder(1, 2);
+            // T1.6 分页查询所有商品，每页显示 5 条记录
+            getGoodsByPage(1, 5);
 
-        // T9 删除指定分类
-        System.out.println("删除指定分类：");
-        deleteCategory(1);
+            // T1.7
+            // T8 修改分类排序
+            modifyCategorySortOrder(1, 2);
+
+            // T9 删除指定分类
+            deleteCategory(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }

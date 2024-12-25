@@ -29,8 +29,7 @@ public class DBUtils {
         if (statement != null) statement.close();
         if (connection != null) connection.close();
     }
-    public static void close(Connection c, Statement s, ResultSet r)
-            throws SQLException {
+    public static void close(Connection c, Statement s, ResultSet r) throws SQLException {
         if (r != null) r.close();
         if (s != null) s.close();
         if (c != null) c.close();
