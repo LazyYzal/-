@@ -16,7 +16,7 @@ public class E_Commerce {
     private static final String USER = "root";
     private static final String PASSWORD = "123456";
 
-    // 静态代码块，用于注册驱动
+    // 注册驱动
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -106,10 +106,11 @@ public class E_Commerce {
         PreparedStatement preparedStatement = null;
 
         // 获取数据库连接
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
 
         // 创建 preparedStatement 对象
-        String sql = "INSERT INTO goods (goods_name, unit_price, stock_quantity, measurement_unit, sales_volume, on_shelf_time, sales_status, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO goods (goods_name, unit_price, stock_quantity, measurement_unit, sales_volume, on_shelf_time, sales_status, category_id)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         preparedStatement = conn.prepareStatement(sql);
 
         // 设置参数
@@ -140,7 +141,7 @@ public class E_Commerce {
         List<Goods> goodsList = new ArrayList<>();
 
         // 获取数据库连接
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
         // 创建 preparedStatement 对象
         String sql = "SELECT * FROM goods WHERE category_id = ?";
         preparedStatement = conn.prepareStatement(sql);
@@ -169,7 +170,7 @@ public class E_Commerce {
         List<Goods> goodsList = new ArrayList<>();
 
         // 获取数据库连接
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
 
         // 创建 preparedStatement 对象
         String sql = "SELECT * FROM goods WHERE stock_quantity < 5";
@@ -180,7 +181,6 @@ public class E_Commerce {
 
         // 处理结果
         goodsList = processGoodsResultSet(resultSet);
-
 
         //释放资源
         preparedStatement.close();
@@ -196,7 +196,7 @@ public class E_Commerce {
         ResultSet resultSet = null;
         List<Goods> goodsList = new ArrayList<>();
         // 获取数据库连接
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
         // 创建 preparedStatement 对象
         String sql = "SELECT * FROM goods ORDER BY sales_volume DESC";
         preparedStatement = conn.prepareStatement(sql);
@@ -219,7 +219,7 @@ public class E_Commerce {
         List<Goods> goodsList = new ArrayList<>();
 
         // 获取数据库连接
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
 
         // 创建 preparedStatement 对象
         String sql = "SELECT * FROM goods ORDER BY unit_price DESC";
@@ -239,7 +239,7 @@ public class E_Commerce {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Goods> goodsList = new ArrayList<>();
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
         String sql = "SELECT * FROM goods LIMIT ? OFFSET ?";
         preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setInt(1, pageSize);
@@ -255,7 +255,7 @@ public class E_Commerce {
     public static void modifyGoodsCategory(int goodsId, int newCategoryId) throws SQLException {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
         String sql = "UPDATE goods SET category_id = ? WHERE id = ?";
         preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setInt(1, newCategoryId);
@@ -271,7 +271,7 @@ public class E_Commerce {
     public static void addCategory(String categoryName, int sortOrder, String categoryIntroduction) throws SQLException {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
         String sql = "INSERT INTO category (category_name, sort_order, category_introduction) VALUES (?, ?, ?)";
         preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, categoryName);
@@ -291,7 +291,7 @@ public class E_Commerce {
         ResultSet resultSet = null;
         List<Category> categoryList = new ArrayList<>();
 
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
         String sql = "SELECT * FROM category";
         preparedStatement = conn.prepareStatement(sql);
         resultSet = preparedStatement.executeQuery();
@@ -335,7 +335,7 @@ public class E_Commerce {
         ResultSet resultSet = null;
 
         // 获取数据库连接
-        conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn = getConnection();
 
         // 检查分类下是否有商品
         String checkSql = "SELECT * FROM goods WHERE category_id = ?";
@@ -362,6 +362,10 @@ public class E_Commerce {
         conn.close();
     }
 
+    // 获取数据库连接
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
 
     public static void main(String[] args) throws Exception {
         // T1 向商品表（goods）中插入一条新的商品记录
